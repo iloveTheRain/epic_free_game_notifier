@@ -51,4 +51,6 @@ Delete webhook.txt to set a new Discord webhook.
 
 to find the sent_games.txt / webhook.txt: Press **Windows + R** will show you the "RUN" box where you can type commands type in **appdata** then press enter a folder will pop up go to **Local** then **EpicFreeGamesBot** go inside the folder then you will find the .txt files
 
-**Example**:  **C:\Users\username\AppData\Local\EpicFreeGamesBot\EpicFreeGamesBot** >> *replace the "username" with your pc username
+Example:  **"C:\Users\username\AppData\Local\EpicFreeGamesBot\EpicFreeGamesBot"** >> replace the "**username**" with your **pc username**
+
+If you experience any problems run the script with **administrator**
