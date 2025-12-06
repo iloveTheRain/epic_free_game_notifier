@@ -1,4 +1,6 @@
 import requests
+import appdirs
+import os
 from pathlib import Path
 from colorama import Fore, init
 from time import sleep
@@ -44,11 +46,10 @@ class GetEpicFreeGames:
 
         return game_info
 
-    def sent_games(self):  # reading the file to check if the game exits
+    def sent_games(self, folder_path):  # reading the file to check if the game exits
 
         try:
-            main_file = Path(__file__).resolve().parent
-            file_loc = Path.joinpath(main_file, "sent_games.txt")
+            file_loc = Path(folder_path) / "sent_games.txt"
 
             with open(file_loc, "r", encoding="utf-8") as f:
                 return [line.strip() for line in f.readlines()]
@@ -56,15 +57,13 @@ class GetEpicFreeGames:
         except FileNotFoundError:
             return []
 
-    def save_game(self, game_name):  # saving new games
-
-        main_file = Path(__file__).resolve().parent
-        file_loc = Path.joinpath(main_file, "sent_games.txt")
+    def save_game(self, game_name, folder_path):  # saving new games
+        file_loc = Path(folder_path) / "sent_games.txt"
 
         with open(file_loc, "a", encoding="utf-8") as f:
             f.write(f"{game_name}\n")
 
-    def send_to_discord(self, web_hook):
+    def send_to_discord(self, web_hook, folder_path):
         games_data = self.fetch_free_games()
 
         if not games_data:
@@ -85,7 +84,7 @@ class GetEpicFreeGames:
         payload = {"embeds": embeds}
 
         try:
-            sent_games_list = self.sent_games()  # Call once before loop for efficiency
+            sent_games_list = self.sent_games(folder_path)  # Call once before loop for efficiency
             
             # Check if ALL games have already been sent
             all_games_sent = all(game["name"] in sent_games_list for game in games_data)
@@ -103,7 +102,7 @@ class GetEpicFreeGames:
             else:
                 # Only save games after confirming successful response
                 for game_name in games_data:
-                    self.save_game(game_name["name"])
+                    self.save_game(game_name["name"], folder_path)
                 print(Fore.GREEN + "Sent free games to Discord!")
                 sleep(1)
 
@@ -112,8 +111,9 @@ class GetEpicFreeGames:
 
 #--------------- MAIN ---------------
 if __name__ == "__main__":
-    main_file = Path(__file__).resolve().parent
-    web_hook_file = Path.joinpath(main_file,"webhook.txt")
+    app_dir = appdirs.user_data_dir("EpicFreeGamesBot")
+    os.makedirs(app_dir, exist_ok=True)
+    web_hook_file = Path(app_dir) / "webhook.txt"
 
     if not web_hook_file.exists():
         webhook = input(Fore.LIGHTGREEN_EX+"Enter the webhook: ").strip()
@@ -127,6 +127,9 @@ if __name__ == "__main__":
     try:
         file_content = web_hook_file.read_text(encoding='utf-8')
         freegames = GetEpicFreeGames()
-        freegames.send_to_discord(file_content)
+        freegames.send_to_discord(file_content, app_dir)
+        
+    except FileNotFoundError:
+        print(Fore.RED + "Webhook file not found. Please run the script again to set up the webhook.")
     except Exception as e:
-        print(Fore.RED+f"Error reading webhook: {e}")
+        print(Fore.RED + f"Error reading webhook: {e}")
