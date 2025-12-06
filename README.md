@@ -55,6 +55,6 @@ Example:  **"C:\Users\username\AppData\Local\EpicFreeGamesBot\EpicFreeGamesBot"*
 
 If you experience any problems run the script with **administrator**
 
-if you want to make this script executes everytime you open your pc press **Windows + R** then type **shell:startup** a folder will open take the shortcut from the script then put it inside that folder 
+### if you want to make this script executes everytime you open your pc press **Windows + R** then type **shell:startup** a folder will open take the shortcut from the script then put it inside that folder 
 ---
 **This project was mainly created for practice. If you notice anything you don’t like, feel free to reach out I might even make a small commission for you!**
