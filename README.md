@@ -14,3 +14,41 @@ Once a game is sent, it gets **saved locally**, so it will **never be sent twice
 - ✔ Prevents duplicate messages  
 - ✔ Clean CLI output with color feedback  
 
+## 📦 installation
+
+Download the **.exe** file
+
+---
+## 🔧 **How It Works**
+
+1️⃣: **Fetch Game Data**
+
+The script calls Epic’s API and extracts:
+
+Name
+
+Image URL
+
+2️⃣: **Check Duplicates**
+
+The tool reads sent_games.txt.
+If all free games are already listed → it sends nothing.
+
+3️⃣: **Send to Discord**
+
+For any new game:
+A Discord embed message is created
+Sent via webhook
+Game saved to sent_games.txt
+
+---
+
+## 📝 Notes
+
+Delete sent_games.txt to resend all games.
+
+Delete webhook.txt to set a new Discord webhook.
+
+to find the sent_games.txt / webhook.txt: Press **Windows + R** will show you the "RUN" box where you can type commands type in **appdata** then press enter a folder will pop up go to **Local** then **EpicFreeGamesBot** go inside the folder then you will find the .txt files
+
+**Example**:  **C:\Users\username\AppData\Local\EpicFreeGamesBot\EpicFreeGamesBot** >> *replace the "username" with your pc username
