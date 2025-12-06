@@ -85,21 +85,25 @@ class GetEpicFreeGames:
         payload = {"embeds": embeds}
 
         try:
-
-            if game["name"] in self.sent_games():  # checking if the game is already sent if so retrun
+            sent_games_list = self.sent_games()  # Call once before loop for efficiency
+            
+            # Check if ALL games have already been sent
+            all_games_sent = all(game["name"] in sent_games_list for game in games_data)
+            
+            if all_games_sent:
                 print(Fore.RED+"Already sent the games in discord server if you want to send them again remove them from the sent_games.txt file")
                 sleep(2)
                 return
 
-            # if this code below run then it means game doesn't exits
-            response = requests.post(web_hook, json=payload, timeout=10)  # sending the new free game to discord
-
-            for game_name in games_data:
-                self.save_game(game_name["name"])  # saving the game name in the file so when the code run again it doesn't send the same game
+            # if this code below run then it means games don't exist in sent list
+            response = requests.post(web_hook, json=payload, timeout=10) 
 
             if response.status_code not in (200, 204):
                 print(Fore.RED + f"Discord Error {response.status_code}")
             else:
+                # Only save games after confirming successful response
+                for game_name in games_data:
+                    self.save_game(game_name["name"])
                 print(Fore.GREEN + "Sent free games to Discord!")
                 sleep(1)
 
@@ -113,12 +117,16 @@ if __name__ == "__main__":
 
     if not web_hook_file.exists():
         webhook = input(Fore.LIGHTGREEN_EX+"Enter the webhook: ").strip()
-        
-        with open(web_hook_file, 'w',encoding='utf-8') as file:
-            file.write(webhook)
 
+        if requests.get(webhook).status_code == 200:
+            with open(web_hook_file, 'w',encoding='utf-8') as file:
+                file.write(webhook)
+        else:
+            print(Fore.RED+"Invalid webhook")
 
-    file_content = web_hook_file.read_text(encoding='utf-8')
-
-    freegames = GetEpicFreeGames()
-    freegames.send_to_discord(file_content)
+    try:
+        file_content = web_hook_file.read_text(encoding='utf-8')
+        freegames = GetEpicFreeGames()
+        freegames.send_to_discord(file_content)
+    except Exception as e:
+        print(Fore.RED+f"Error reading webhook: {e}")
